@@ -10,7 +10,7 @@ const Button = (props: React.PropsWithChildren<IButton>) => {
   const { className, ...customProps } = props;
 
   return (
-    <button className="rounded" {...customProps}>
+    <button className="p-2 rounded text-white bg-blue-400" {...customProps}>
       {props.children}
     </button>
   );

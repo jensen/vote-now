@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import Router from "./Router";
-import AuthProvider from "context/auth";
 
 import "./index.css";
 
@@ -14,8 +13,6 @@ if (!root) {
 
 ReactDOM.createRoot(root).render(
   <React.StrictMode>
-    <AuthProvider>
-      <Router />
-    </AuthProvider>
+    <Router />
   </React.StrictMode>
 );

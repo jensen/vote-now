@@ -1,7 +1,7 @@
-import LoginButton from "components/LoginButton";
+import { DiscordLoginButton } from "components/LoginButton";
 
 const Login = () => {
-  return <LoginButton />;
+  return <DiscordLoginButton />;
 };
 
 export default Login;
