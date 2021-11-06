@@ -1,5 +1,7 @@
+import LoginButton from "components/LoginButton";
+
 const Login = () => {
-  return <div />;
+  return <LoginButton />;
 };
 
 export default Login;
