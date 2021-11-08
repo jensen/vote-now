@@ -25,15 +25,12 @@ const Page = (props: React.PropsWithChildren<unknown>) => (
   </ErrorBoundary>
 );
 
-export const ProjectPage = () => (
-  <Page>
-    <Project />
-  </Page>
-);
-
 export const ProjectsPage = () => (
   <Page>
-    <Projects />
+    <Routes>
+      <Route path="" element={<Projects />} />
+      <Route path=":id" element={<Project />} />
+    </Routes>
   </Page>
 );
 
@@ -41,7 +38,7 @@ export const AdminPage = () => (
   <Page>
     <div className="w-auto">
       <Routes>
-        <Route path="/" element={<Admin />} />
+        <Route path="" element={<Admin />} />
         <Route path="projects/new" element={<CreateProject />} />
         <Route path="projects/:id" element={<EditProject />} />
       </Routes>

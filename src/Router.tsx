@@ -12,7 +12,7 @@ import AuthProvider, { useAuth } from "context/auth";
 import Layout from "components/layouts/Layout";
 import Login from "pages/Login";
 
-import { ProjectsPage, ProjectPage, AdminPage } from "pages";
+import { ProjectsPage, AdminPage } from "pages";
 
 import { fetchProjects } from "services/projects";
 
@@ -62,18 +62,10 @@ const Router = () => (
           <Route path="/*" element={<Layout />}>
             <Route path="login" element={<Login />} />
             <Route
-              path="projects"
+              path="projects/*"
               element={
                 <VerifyAuthenticated>
                   <ProjectsPage />
-                </VerifyAuthenticated>
-              }
-            />
-            <Route
-              path="projects/:id"
-              element={
-                <VerifyAuthenticated>
-                  <ProjectPage />
                 </VerifyAuthenticated>
               }
             />
