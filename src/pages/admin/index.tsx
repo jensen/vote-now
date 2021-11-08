@@ -13,7 +13,7 @@ const ProjectSettings = (props: IProjectSettings) => {
       <td className="px-6 py-4 whitespace-nowrap">
         <Tag label={props.complexity} />
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">{props.locked_at}</td>
+      <td className="px-6 py-4 whitespace-nowrap">{props.ended_at}</td>
       <td className="px-6 py-4 whitespace-nowrap">
         <HStack>
           <Button onClick={() => navigate(`projects/${props.id}`)}>Edit</Button>

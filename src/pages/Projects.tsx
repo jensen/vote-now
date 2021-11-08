@@ -1,10 +1,33 @@
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "react-query";
+import { isAfter, isBefore } from "date-fns";
 import { useProjects } from "hooks/projects";
 import { fetchProject } from "services/projects";
 import { Tag, VStack } from "components/common";
 
 interface IProjectPreview extends IProjectResource {}
+
+const isAcceptingSubmissions = (start: Date, end: Date) => {
+  const now = new Date();
+  return isAfter(now, start) && isBefore(now, end);
+};
+
+const isVoting = (end: Date, complete: Date) => {
+  const now = new Date();
+  return isAfter(now, end) && isBefore(now, complete);
+};
+
+const getProjectStatus = (start: Date, end: Date, complete: Date) => {
+  if (isAcceptingSubmissions(start, end)) {
+    return "Accepting Submissions";
+  }
+
+  if (isVoting(end, complete)) {
+    return "Voting";
+  }
+
+  return "Finished";
+};
 
 const ProjectPreview = (props: IProjectPreview) => {
   const queryClient = useQueryClient();
@@ -18,7 +41,11 @@ const ProjectPreview = (props: IProjectPreview) => {
     navigate(props.id);
   };
 
-  console.log(props.locked_at);
+  const status = getProjectStatus(
+    new Date(props.started_at),
+    new Date(props.ended_at),
+    new Date(props.completed_at)
+  );
 
   return (
     <div className="rounded-md border p-4" onClick={goto}>
@@ -47,7 +74,7 @@ const ProjectPreview = (props: IProjectPreview) => {
           <dt className="font-medium text-gray-900">
             <a href={props.description}>Status</a>
           </dt>
-          <dd className="mt-2 text-sm text-gray-500">Finished</dd>
+          <dd className="mt-2 text-sm text-gray-500">{status}</dd>
         </div>
       </dl>
     </div>

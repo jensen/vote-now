@@ -62,9 +62,13 @@ create table projects (
   id uuid default extensions.uuid_generate_v4() primary key,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  archived_at timestamp with time zone, -- if archived
+
+  started_at timestamp with time zone not null, -- when the project start
+  ended_at timestamp with time zone not null, -- when the project ends
   
-  locked_at timestamp with time zone not null,
-  
+  completed_at timestamp with time zone not null, -- when voting is locked
+
   title text,
   summary text,
   complexity text,
@@ -132,7 +136,6 @@ create table awards (
 
 -- Votes
 
--- 
 create table votes (
   id uuid default extensions.uuid_generate_v4(),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
