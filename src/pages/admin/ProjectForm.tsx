@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import {
   VStack,
@@ -8,18 +8,8 @@ import {
   TextArea,
   Label,
 } from "components/common";
+import { useControlledInput } from "hooks/input";
 import { withPreventDefault } from "utils/events";
-
-const useControlledInput = (initial: string) => {
-  const [value, setValue] = useState(initial);
-
-  return {
-    onChange: (
-      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => setValue(event.target.value),
-    value,
-  };
-};
 
 interface IProjectForm {
   project?: IProjectResource | null;

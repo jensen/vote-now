@@ -3,7 +3,7 @@ import supabase from "services";
 export const fetchProjects = () =>
   supabase
     .from<IProjectResource>("projects")
-    .select()
+    .select("*, submissions(id)")
     .then((response) => response.data);
 
 export const fetchProject = (id: string) => () =>

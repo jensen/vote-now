@@ -114,8 +114,8 @@ create table submissions (
   repository text,
   deployment text,
 
-  user_id uuid not null,
-  constraint user_id foreign key(user_id) references users(id) on delete cascade,
+  user_id uuid default auth.uid() not null,
+  constraint user_id foreign key(user_id) references public_profiles(id) on delete cascade,
 
   project_id uuid,
   constraint project_id foreign key(project_id) references projects(id) on delete cascade

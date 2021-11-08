@@ -10,7 +10,19 @@ interface IProjectResource {
   summary: string;
   complexity: string;
   description: string;
+  submissions: string[];
 }
 
 interface ICreateProjectResource
   extends Omit<IProjectResource, "id" | "created_at" | "updated_at"> {}
+
+interface ISubmissionResource {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  repository: string;
+  deployment: string;
+}
+
+interface ICreateSubmissionResource
+  extends Omit<ISubmissionResource, "id" | "created_at" | "updated_at"> {}
