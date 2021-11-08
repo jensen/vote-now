@@ -4,10 +4,14 @@ import { ReactQueryDevtools } from "react-query/devtools";
 
 const Layout = () => {
   return (
-    <main className="h-full flex flex-col">
+    <main className="min-h-full">
       <Header />
-      <section className="flex-grow p-2">
-        <Outlet />
+      <section>
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <Outlet />
+          </div>
+        </div>
       </section>
       <ReactQueryDevtools initialIsOpen />
     </main>

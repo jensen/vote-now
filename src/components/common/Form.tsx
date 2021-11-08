@@ -56,7 +56,7 @@ export const InputGroup = (
     <>
       {React.Children.map(props.children, (child) => {
         if (React.isValidElement(child)) {
-          const label = { for: props.id };
+          const label = { htmlFor: props.id };
           const input = { id: props.id };
 
           return React.cloneElement(

@@ -9,3 +9,13 @@ export const withStopPropagation =
       fn(event);
     }
   };
+
+export const withPreventDefault =
+  <T extends SyntheticEvent>(fn: (event: T) => void) =>
+  (event: T) => {
+    event.preventDefault();
+
+    if (fn) {
+      fn(event);
+    }
+  };

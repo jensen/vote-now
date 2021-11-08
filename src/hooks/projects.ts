@@ -1,9 +1,10 @@
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import {
   fetchProjects,
   fetchProject,
   createProject,
   updateProject,
+  deleteProject,
 } from "services/projects";
 
 export const useProjects = () => {
@@ -26,18 +27,49 @@ export const useProject = (id: string | undefined) => {
   return query.data;
 };
 
-export const useCreateProject = (project: ICreateProjectResource) => {
+export const useCreateProject = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation<IProjectResource, Error, ICreateProjectResource>(
-    createProject as any
+    createProject as any,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("projects");
+      },
+    }
   );
 
-  return () => mutation.mutate(project);
+  return (project: ICreateProjectResource) => mutation.mutate(project);
 };
 
-export const useEditProject = (project: ICreateProjectResource) => {
+export const useEditProject = (id: string | undefined) => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation<IProjectResource, Error, ICreateProjectResource>(
-    updateProject as any
+    updateProject(id) as any,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("projects");
+        queryClient.invalidateQueries(["project", id]);
+      },
+    }
   );
 
-  return () => mutation.mutate(project);
+  return (project: ICreateProjectResource) => mutation.mutate(project);
+};
+
+export const useDeleteProject = (id: string | undefined) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<IProjectResource, Error>(
+    deleteProject(id) as any,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("projects");
+        queryClient.invalidateQueries(["project", id]);
+      },
+    }
+  );
+
+  return () => mutation.mutate();
 };

@@ -2,7 +2,7 @@
 
 drop table if exists public.profiles;
 create table public.profiles (
-  id uuid references auth.users primary key on delete cascade,
+  id uuid references auth.users primary key,
   email text,
   name text,
   avatar text,
@@ -50,7 +50,6 @@ returns boolean
 language sql
 security definer
 set search_path = public
-stable
 as $$
     select admin
     from profiles
@@ -80,10 +79,24 @@ create policy "Projects can be selected by anyone"
     true
   );
 
-create policy "Projects can only be inserted by admins"
-  on projects for select using (
-    auth.uid() = id
-    admin
+create policy "Projects can only be inserted by an admin"
+  on projects for insert with check (
+    auth.role() = 'authenticated'
+    and
+    get_is_admin()
+  );
+
+create policy "Projects can only be updated by an admin"
+  on projects for update using (
+    auth.role() = 'authenticated'
+    and
+    get_is_admin()
+  );
+
+create policy "Projects can only be deleted by an admin"
+  on projects for delete using (
+    auth.role() = 'authenticated'
+    and
     get_is_admin()
   );
 

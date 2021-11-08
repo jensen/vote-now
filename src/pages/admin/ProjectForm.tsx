@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
 
-import Button from "components/common/Button";
-import { Input, InputGroup, TextArea, Label } from "components/common/Form";
-import { VStack } from "components/common/Stack";
-import { useCreateProject, useEditProject, useProject } from "hooks/projects";
-import { withStopPropagation } from "utils/events";
+import {
+  VStack,
+  Button,
+  Input,
+  InputGroup,
+  TextArea,
+  Label,
+} from "components/common";
+import { withPreventDefault } from "utils/events";
 
 const useControlledInput = (initial: string) => {
   const [value, setValue] = useState(initial);
@@ -18,35 +21,26 @@ const useControlledInput = (initial: string) => {
   };
 };
 
-const CreateProject = () => {
-  const { id } = useParams();
+interface IProjectForm {
+  project?: IProjectResource | null;
+  onSubmit: any;
+}
 
-  const project = useProject(id);
-
+const ProjectForm = ({ project, onSubmit }: IProjectForm) => {
   const title = useControlledInput(project?.title ?? "");
   const summary = useControlledInput(project?.summary ?? "");
   const description = useControlledInput(project?.description ?? "");
 
-  const save = useCreateProject({
-    title: title.value,
-    summary: summary.value,
-    complexity: "Intermediate",
-    description: description.value,
-    locked_at: new Date().toISOString(),
-  });
-
-  const update = useEditProject({
-    title: title.value,
-    summary: summary.value,
-    complexity: "Intermediate",
-    description: description.value,
-    locked_at: new Date().toISOString(),
-  });
-
   return (
     <form
-      onSubmit={withStopPropagation<React.FormEvent<HTMLFormElement>>(
-        project ? update : save
+      onSubmit={withPreventDefault<React.FormEvent<HTMLFormElement>>(() =>
+        onSubmit({
+          title: title.value,
+          summary: summary.value,
+          description: description.value,
+          complexity: "Intermediate",
+          locked_at: new Date().toISOString(),
+        })
       )}
     >
       <VStack>
@@ -68,4 +62,4 @@ const CreateProject = () => {
   );
 };
 
-export default CreateProject;
+export default ProjectForm;

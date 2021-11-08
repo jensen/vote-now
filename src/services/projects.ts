@@ -16,5 +16,9 @@ export const fetchProject = (id: string) => () =>
 export const createProject = (project: ICreateProjectResource) =>
   supabase.from("projects").insert(project);
 
-export const updateProject = (id: string, project: ICreateProjectResource) =>
-  supabase.from("projects").update(project).match({ id });
+export const updateProject =
+  (id: string | undefined) => (project: ICreateProjectResource) =>
+    supabase.from("projects").update(project).match({ id });
+
+export const deleteProject = (id: string | undefined) => () =>
+  supabase.from("projects").delete().match({ id });

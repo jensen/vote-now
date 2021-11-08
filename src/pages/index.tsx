@@ -6,7 +6,8 @@ const Projects = React.lazy(() => import("pages/Projects"));
 const Project = React.lazy(() => import("pages/Project"));
 
 const Admin = React.lazy(() => import("pages/admin"));
-const ProjectForm = React.lazy(() => import("pages/admin/ProjectForm"));
+const CreateProject = React.lazy(() => import("pages/admin/CreateProject"));
+const EditProject = React.lazy(() => import("pages/admin/EditProject"));
 
 interface IErrorFallback {
   error: Error;
@@ -41,8 +42,8 @@ export const AdminPage = () => (
     <div className="w-auto">
       <Routes>
         <Route path="/" element={<Admin />} />
-        <Route path="projects/new" element={<ProjectForm />} />
-        <Route path="projects/:id" element={<ProjectForm />} />
+        <Route path="projects/new" element={<CreateProject />} />
+        <Route path="projects/:id" element={<EditProject />} />
       </Routes>
     </div>
   </Page>
