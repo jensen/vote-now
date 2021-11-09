@@ -1,9 +1,29 @@
 import { useParams } from "react-router-dom";
 import { VStack, Button, InputGroup, Input, Label } from "components/common";
-import { withPreventDefault } from "utils/events";
 import { useProject } from "hooks/projects";
-import { useCreateSubmission } from "hooks/submissions";
+import { useSubmissions, useCreateSubmission } from "hooks/submissions";
 import { useControlledInput } from "hooks/input";
+import { withPreventDefault } from "utils/events";
+import { isAcceptingSubmissions, isAcceptingVotes } from "utils/status";
+
+interface ISubmissionList {
+  projectId: string;
+}
+
+const SubmissionList = (props: ISubmissionList) => {
+  const submissions = useSubmissions(props.projectId);
+
+  return (
+    <VStack>
+      {submissions.map((submission) => (
+        <div className="border p-2 rounded">
+          {submission.user.name}, {submission.repository},{" "}
+          {submission.deployment}
+        </div>
+      ))}
+    </VStack>
+  );
+};
 
 interface ISubmissionForm {
   projectId: string;
@@ -54,7 +74,11 @@ const Project = (props: IProject) => {
       </h2>
       <p className="mt-4 text-gray-500">{project.summary}</p>
 
-      <SubmissionForm projectId={id} />
+      {isAcceptingSubmissions(project) && <SubmissionForm projectId={id} />}
+      <h3 className="text-xl font-bold tracking-tight text-gray-700  border-b mb-2 sm:text-2xl">
+        Submissions
+      </h3>
+      <SubmissionList projectId={id} />
     </div>
   );
 };

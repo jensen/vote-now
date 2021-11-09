@@ -1,3 +1,7 @@
+interface IProfileResource {
+  name: string;
+}
+
 interface IProjectResource {
   id: string;
   created_at: string;
@@ -22,7 +26,11 @@ interface ISubmissionResource {
   updated_at: string;
   repository: string;
   deployment: string;
+  user: IProfileResource;
 }
 
 interface ICreateSubmissionResource
-  extends Omit<ISubmissionResource, "id" | "created_at" | "updated_at"> {}
+  extends Omit<
+    ISubmissionResource,
+    "id" | "created_at" | "updated_at" | "user"
+  > {}

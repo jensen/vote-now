@@ -78,26 +78,26 @@ create table projects (
 alter table projects
   enable row level security;
 
-create policy "Projects can be selected by anyone"
+create policy "Projects selected: anon"
   on projects for select using (
     true
   );
 
-create policy "Projects can only be inserted by an admin"
+create policy "Projects inserted: admin"
   on projects for insert with check (
     auth.role() = 'authenticated'
     and
     get_is_admin()
   );
 
-create policy "Projects can only be updated by an admin"
+create policy "Projects updated: admin"
   on projects for update using (
     auth.role() = 'authenticated'
     and
     get_is_admin()
   );
 
-create policy "Projects can only be deleted by an admin"
+create policy "Projects deleted: admin"
   on projects for delete using (
     auth.role() = 'authenticated'
     and
@@ -115,11 +115,37 @@ create table submissions (
   deployment text,
 
   user_id uuid default auth.uid() not null,
-  constraint user_id foreign key(user_id) references public_profiles(id) on delete cascade,
+  constraint user_id foreign key(user_id) references profiles(id) on delete cascade,
 
   project_id uuid,
   constraint project_id foreign key(project_id) references projects(id) on delete cascade
 );
+
+alter table submissions
+  enable row level security;
+
+create policy "Submissions can be selected by anyone"
+  on submissions for select using (
+    true
+  );
+
+create policy "Submissions inserted: project is active by an authenticated user"
+  on submissions for insert with check (
+    auth.role() = 'authenticated'
+    and
+    get_is_submission_accepted(project_id)
+  );
+
+create or replace function get_is_submission_accepted(project_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+    select (case when count(id) = 1 then true else false end)
+    from projects
+    where id = project_id and timezone('utc'::text, now()) between projects.started_at and projects.ended_at;
+$$;
 
 -- Awards
 
@@ -128,10 +154,9 @@ create table awards (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
 
-  name text,
-
-  project_id uuid,
-  constraint project_id foreign key(project_id) references projects(id) on delete cascade
+  name text not null,
+  description text not null,
+  image text
 );
 
 -- Votes
@@ -141,7 +166,7 @@ create table votes (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
 
-  user_id uuid not null,
+  user_id uuid default auth.uid() not null,
   constraint user_id foreign key(user_id) references users(id) on delete cascade,
 
   submission_id uuid not null,
@@ -150,3 +175,43 @@ create table votes (
   award_id uuid not null,
   constraint award_id foreign key(award_id) references awards(id) on delete cascade
 );
+
+alter table votes
+  enable row level security;
+
+create policy "Votes selected: anon"
+  on votes for select using (
+    true
+  );
+
+create policy "Votes inserted: project voting, authenticated user"
+  on votes for insert with check (
+    auth.role() = 'authenticated'
+    and
+    get_is_vote_accepted(submission_id)
+    and
+    get_is_vote_uncast(submission_id, award_id)
+  );
+
+create or replace function get_is_vote_accepted(submission_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+    select (case when count(projects.id) = 0 then true else false end)
+    from submissions
+    join projects on projects.id = submissions.project_id
+    where submissions.id = submission_id and timezone('utc'::text, now()) between projects.ended_at and projects.completed_at;
+$$;
+
+create or replace function get_is_vote_uncast(submission_id uuid, award_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+    select (case when count(votes.id) = 0 then true else false end)
+    from votes
+    where votes.submission_id = submission_id and votes.award_id = award_id and votes.user_id = auth.uid();
+$$;

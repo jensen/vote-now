@@ -1,7 +1,7 @@
 import { SyntheticEvent } from "react";
 
 export const withStopPropagation =
-  <T extends SyntheticEvent>(fn: (event: T) => void) =>
+  <T extends SyntheticEvent>(fn?: (event: T) => void) =>
   (event: T) => {
     event.stopPropagation();
 
@@ -11,7 +11,7 @@ export const withStopPropagation =
   };
 
 export const withPreventDefault =
-  <T extends SyntheticEvent>(fn: (event: T) => void) =>
+  <T extends SyntheticEvent>(fn?: (event: T) => void) =>
   (event: T) => {
     event.preventDefault();
 

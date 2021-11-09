@@ -4,7 +4,7 @@ export const fetchSubmissions = (projectId: string) => () => {
   if (projectId) {
     return supabase
       .from<ISubmissionResource>("submissions")
-      .select()
+      .select("*, user: profiles(name)")
       .match({ project_id: projectId })
       .then((response) => response.data);
   }

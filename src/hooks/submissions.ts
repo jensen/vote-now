@@ -1,10 +1,14 @@
+import { AnyMxRecord } from "dns";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import { fetchSubmissions, createSubmission } from "services/submissions";
 
 export const useSubmissions = (projectId: string) => {
   const query = useQuery<ISubmissionResource[], Error>(
     "submissions",
-    fetchSubmissions(projectId) as any
+    fetchSubmissions(projectId) as any,
+    {
+      staleTime: 0,
+    }
   );
 
   return query.data || [];
@@ -19,6 +23,7 @@ export const useCreateSubmission = (projectId: string) => {
     ICreateSubmissionResource
   >(createSubmission(projectId) as any, {
     onSuccess: () => {
+      queryClient.invalidateQueries("projects");
       queryClient.invalidateQueries("submissions");
     },
   });
