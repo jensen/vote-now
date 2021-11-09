@@ -3,7 +3,7 @@ import { fetchSubmissions, createSubmission } from "services/submissions";
 
 export const useSubmissions = (projectId: string) => {
   const query = useQuery<ISubmissionResource[], Error>(
-    "submissions",
+    ["submissions", projectId],
     fetchSubmissions(projectId) as any,
     {
       staleTime: 0,

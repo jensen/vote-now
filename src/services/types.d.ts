@@ -34,3 +34,23 @@ interface ICreateSubmissionResource
     ISubmissionResource,
     "id" | "created_at" | "updated_at" | "user"
   > {}
+
+interface IAwardResource {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  name: string;
+  description: string;
+  image?: string;
+}
+
+interface IVoteResource {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  submission_id: string;
+  award_id: string;
+}
+
+interface ICreateVoteResource
+  extends Omit<IVoteResource, "id" | "created_at" | "updated_at"> {}

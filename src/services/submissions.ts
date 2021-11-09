@@ -3,8 +3,8 @@ import supabase from "services";
 export const fetchSubmissions = (projectId: string) => () => {
   if (projectId) {
     return supabase
-      .from<ISubmissionResource>("submissions")
-      .select("*, user: profiles(name)")
+      .from<ISubmissionResource>("public_submissions")
+      .select()
       .match({ project_id: projectId })
       .then((response) => response.data);
   }

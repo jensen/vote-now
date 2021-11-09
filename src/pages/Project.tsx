@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { VStack, Button, InputGroup, Input, Label } from "components/common";
 import { useProject } from "hooks/projects";
@@ -5,21 +6,57 @@ import { useSubmissions, useCreateSubmission } from "hooks/submissions";
 import { useControlledInput } from "hooks/input";
 import { withPreventDefault } from "utils/events";
 import { isAcceptingSubmissions, isAcceptingVotes } from "utils/status";
+import AwardsList from "components/AwardsList";
+
+interface ISubmission extends ISubmissionResource {
+  allowVote: boolean;
+}
+
+const Submission = (props: ISubmission) => {
+  return (
+    <div className="border p-2 rounded w-full flex justify-between">
+      <div>
+        <h2 className="text-xl">{props.user}</h2>
+        <a
+          href={props.repository}
+          className="text-indigo-700"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View Repository
+        </a>
+        <br />
+        <a
+          href={props.deployment}
+          className="text-indigo-700"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View Website
+        </a>
+      </div>
+      {props.allowVote && <AwardsList submissionId={props.id} />}
+    </div>
+  );
+};
 
 interface ISubmissionList {
   projectId: string;
+  allowVote: boolean;
 }
 
 const SubmissionList = (props: ISubmissionList) => {
   const submissions = useSubmissions(props.projectId);
 
+  if (submissions.length === 0) return null;
+
   return (
     <VStack>
+      <h3 className="text-xl font-bold tracking-tight text-gray-700  border-b sm:text-2xl">
+        Submissions
+      </h3>
       {submissions.map((submission) => (
-        <div className="border p-2 rounded">
-          {submission.user.name}, {submission.repository},{" "}
-          {submission.deployment}
-        </div>
+        <Submission {...submission} allowVote={props.allowVote} />
       ))}
     </VStack>
   );
@@ -75,10 +112,10 @@ const Project = (props: IProject) => {
       <p className="mt-4 text-gray-500">{project.summary}</p>
 
       {isAcceptingSubmissions(project) && <SubmissionForm projectId={id} />}
-      <h3 className="text-xl font-bold tracking-tight text-gray-700  border-b mb-2 sm:text-2xl">
-        Submissions
-      </h3>
-      <SubmissionList projectId={id} />
+
+      <Suspense fallback={null}>
+        <SubmissionList projectId={id} allowVote={isAcceptingVotes(project)} />
+      </Suspense>
     </div>
   );
 };
