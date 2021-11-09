@@ -1,4 +1,3 @@
-import { AnyMxRecord } from "dns";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import { fetchSubmissions, createSubmission } from "services/submissions";
 
