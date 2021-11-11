@@ -8,7 +8,7 @@ Inspired by the [https://devjam.vercel.app/](https://devjam.vercel.app/) site an
 
 [https://modest-newton-235fe0.netlify.app/](https://modest-newton-235fe0.netlify.app/)
 
-<img src="https://user-images.githubusercontent.com/14803/141271963-c6a96e99-e745-44fa-b37c-591756c8ac8a.png" width="768" alt="Projects List" />
+<img src="https://user-images.githubusercontent.com/14803/141273240-0f93e6a8-21ef-4fd8-9409-89eebe8aed3a.png" width="768" alt="Projects List" />
 
 ## Project Features
 
@@ -213,7 +213,7 @@ export const VerifyAuthenticated = ({
 
 ### Responsive
 
-<img src="https://user-images.githubusercontent.com/14803/141272154-4060d71a-9ff9-41e5-8f53-66cd6818037d.png" width="360" alt="Mobile" />
+<img src="https://user-images.githubusercontent.com/14803/141273030-d79d4369-436b-4d8b-af3d-efc28a75051c.png" width="360" alt="Mobile" />
 
 ### Incomplete
 
