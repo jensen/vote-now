@@ -8,6 +8,8 @@ Inspired by the [https://devjam.vercel.app/](https://devjam.vercel.app/) site an
 
 [https://modest-newton-235fe0.netlify.app/](https://modest-newton-235fe0.netlify.app/)
 
+<img src="https://user-images.githubusercontent.com/14803/141271963-c6a96e99-e745-44fa-b37c-591756c8ac8a.png" width="768" alt="Projects List" />
+
 ## Project Features
 
 Directly from the project description:
@@ -35,6 +37,8 @@ When a user chooses a project that is in the voting phase, they can choose from 
 4. Store items and votes in a database
 
 It's all in Postgres hosted by [supabase](https://supabase.io).
+
+<img width="236" alt="Screen Shot 2021-11-11 at 12 22 45 AM" src="https://user-images.githubusercontent.com/14803/141271766-e7fffddf-25d5-47d0-ad62-03941d4e7e83.png">
 
 5. After voting, the user should see the results from everyone
 
@@ -206,6 +210,10 @@ export const VerifyAuthenticated = ({
   return children;
 };
 ```
+
+### Responsive
+
+<img src="https://user-images.githubusercontent.com/14803/141272154-4060d71a-9ff9-41e5-8f53-66cd6818037d.png" width="360" alt="Mobile" />
 
 ### Incomplete
 
