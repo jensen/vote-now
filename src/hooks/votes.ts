@@ -36,7 +36,10 @@ export const useCreateVote = (submissionId: string, awardId: string) => {
     }
   );
 
-  return (vote: ICreateVoteResource) => mutation.mutate(vote);
+  return {
+    status: mutation.isLoading,
+    action: (vote: ICreateVoteResource) => mutation.mutate(vote),
+  };
 };
 
 export const useDeleteVote = (id: string | undefined) => {
@@ -48,5 +51,8 @@ export const useDeleteVote = (id: string | undefined) => {
     },
   });
 
-  return () => mutation.mutate();
+  return {
+    status: mutation.isLoading,
+    action: () => mutation.mutate(),
+  };
 };

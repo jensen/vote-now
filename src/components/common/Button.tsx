@@ -12,7 +12,7 @@ export const Button = (props: React.PropsWithChildren<IButton>) => {
 
   return (
     <button
-      className={classnames("px-4 py-2 rounded", className)}
+      className={classnames("w-full px-4 py-2 rounded", className)}
       {...customProps}
     >
       {props.children}

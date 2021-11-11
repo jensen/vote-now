@@ -3,10 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { useProjects } from "hooks/projects";
 import { fetchProject } from "services/projects";
-import { Tag, VStack } from "components/common";
+import { EasyTag, MediumTag, HardTag, VStack } from "components/common";
 import { withStopPropagation } from "utils/events";
 import { getProjectStatus } from "utils/status";
 import { useVoteResults } from "hooks/votes";
+
+const tagLookup: any = {
+  Beginner: EasyTag,
+  Intermediate: MediumTag,
+  Hard: HardTag,
+};
 
 interface IResults {
   projectId: string;
@@ -59,6 +65,8 @@ const ProjectPreview = (props: IProjectPreview) => {
   };
 
   const status = getProjectStatus(props);
+
+  const Tag = tagLookup[props.complexity];
 
   return (
     <div

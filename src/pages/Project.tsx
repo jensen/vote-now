@@ -1,6 +1,13 @@
 import { Suspense } from "react";
 import { useParams } from "react-router-dom";
-import { VStack, Button, InputGroup, Input, Label } from "components/common";
+import {
+  WarningAlert,
+  VStack,
+  PrimaryButton,
+  InputGroup,
+  Input,
+  Label,
+} from "components/common";
 import { useProject } from "hooks/projects";
 import { useAuth } from "context/auth";
 import { useSubmissions, useCreateSubmission } from "hooks/submissions";
@@ -15,9 +22,14 @@ interface ISubmission extends ISubmissionResource {
 }
 
 const Submission = (props: ISubmission) => {
+  const auth = useAuth();
+
   return (
-    <div className="border p-2 rounded w-full flex justify-between">
+    <div className="border-b py-2 w-full flex justify-between flex-col sm:flex-row">
       <div>
+        <h3 className="text-xs font-regular text-gray-400 leading-3">{`SUBMITTED BY${
+          auth.user?.user_metadata.full_name === props.user ? " YOU" : ""
+        }`}</h3>
         <h2 className="text-xl">{props.user}</h2>
         <a
           href={props.repository}
@@ -58,7 +70,7 @@ const SubmissionList = (props: ISubmissionList) => {
 
   return (
     <VStack>
-      <h3 className="text-xl font-bold tracking-tight text-gray-700  border-b sm:text-2xl">
+      <h3 className="text-2xl font-bold tracking-tight text-gray-700 border-b sm:text-3xl">
         Submissions
       </h3>
       {submissions.map((submission) => (
@@ -103,8 +115,10 @@ const SubmissionForm = (props: ISubmissionForm) => {
           <Label>Deployment</Label>
           <Input {...deployment} />
         </InputGroup>
-        <Button type="submit">Submit</Button>
       </VStack>
+      <div className="w-full mt-4">
+        <PrimaryButton type="submit">Submit</PrimaryButton>
+      </div>
     </form>
   );
 };
@@ -122,16 +136,30 @@ const Submissions = (props: ISubmissions) => {
 
   return (
     <>
-      {accepting && auth.user && submissions.length === 0 && (
-        <SubmissionForm onSubmit={submit} />
+      {accepting && auth.user === null && (
+        <WarningAlert
+          title="Login to Submit"
+          description="Must login to submit a project."
+        />
       )}
-      {accepting && auth.user === null && <div>Login to Submit</div>}
-      {voting && auth.user === null && <div>Login to Vote</div>}
-      <SubmissionList
-        projectId={props.project.id}
-        submissions={submissions}
-        allowVote={isAcceptingVotes(props.project)}
-      />
+      {voting && auth.user === null && (
+        <WarningAlert
+          title="Login to Vote"
+          description="Must login to vote on a project."
+        />
+      )}
+      {accepting && auth.user && submissions.length === 0 && (
+        <div className="mt-4">
+          <SubmissionForm onSubmit={submit} />
+        </div>
+      )}
+      <div className="mt-4">
+        <SubmissionList
+          projectId={props.project.id}
+          submissions={submissions}
+          allowVote={isAcceptingVotes(props.project)}
+        />
+      </div>
     </>
   );
 };

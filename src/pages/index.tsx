@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
-import Loading from "components/common/Loading";
+import { Loading } from "components/common";
 
 const Projects = React.lazy(() => import("pages/Projects"));
 const Project = React.lazy(() => import("pages/Project"));
