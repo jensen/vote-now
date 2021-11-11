@@ -6,6 +6,43 @@ import { fetchProject } from "services/projects";
 import { Tag, VStack } from "components/common";
 import { withStopPropagation } from "utils/events";
 import { getProjectStatus } from "utils/status";
+import { useVoteResults } from "hooks/votes";
+
+interface IResults {
+  projectId: string;
+}
+
+const Results = (props: IResults) => {
+  const results = useVoteResults(props.projectId);
+
+  if (results.length === 0) return null;
+
+  const winners = results.map((award) => {
+    const highest = Math.max(
+      ...Object.values(award.vote_count).map((v) => Number(v))
+    );
+
+    return {
+      name: award.name,
+      winners: Object.entries(award.vote_count)
+        .filter(([name, count]) => Number(count) === highest)
+        .map(([name]) => name),
+    };
+  });
+
+  return (
+    <div className="mt-4 text-xl">
+      <h3 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+        Results
+      </h3>
+      {winners.map((award) => (
+        <div key={award.name}>
+          {award.name}: {award.winners.join(", ")}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 interface IProjectPreview extends IProjectResource {}
 
@@ -43,6 +80,7 @@ const ProjectPreview = (props: IProjectPreview) => {
           View Project Requirements
         </a>
       </h3>
+      <Results projectId={props.id} />
       <dl className="mt-8 grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-y-12 lg:gap-x-8">
         <div>
           <dt className="font-medium text-gray-900">Status</dt>
@@ -75,7 +113,7 @@ const Projects = () => {
   return (
     <VStack>
       {sorted.map((project) => (
-        <ProjectPreview {...project} />
+        <ProjectPreview key={project.id} {...project} />
       ))}
     </VStack>
   );

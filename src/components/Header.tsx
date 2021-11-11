@@ -6,12 +6,7 @@ import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useAuth } from "context/auth";
 import Logo from "components/Logo";
 
-const siteNavigation = [
-  { label: "Projects", to: "/projects" },
-  { label: "Rules", to: "/rules" },
-  { label: "Awards", to: "/awards" },
-  { label: "Admin", to: "/admin" },
-];
+const siteNavigation = [{ label: "Projects", to: "/projects" }];
 
 const userNavigation = [
   {
@@ -76,7 +71,7 @@ const Header = () => {
                 <div className="hidden md:block">
                   <div className="ml-10 flex items-baseline space-x-4">
                     {siteNavigation.map(({ label, to }) => (
-                      <HeaderLink to={to} label={label} />
+                      <HeaderLink key={label} to={to} label={label} />
                     ))}
                   </div>
                 </div>
@@ -143,7 +138,7 @@ const Header = () => {
           <Disclosure.Panel className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {siteNavigation.map(({ label, to }) => (
-                <HeaderLink to={to} label={label} />
+                <HeaderLink key={label} to={to} label={label} />
               ))}
             </div>
             <div className="pt-4 pb-3 border-t border-gray-700">
@@ -171,6 +166,7 @@ const Header = () => {
               <div className="mt-3 px-2 space-y-1">
                 {userNavigation.map(({ label, to }) => (
                   <UserLink
+                    key={label}
                     to={to}
                     label={label}
                     className="block w-full px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"

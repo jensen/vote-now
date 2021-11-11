@@ -5,6 +5,7 @@ import { useVotes, useCreateVote, useDeleteVote } from "hooks/votes";
 interface IAward extends IAwardResource {
   submissionId: string;
   voteId?: string;
+  disabled: boolean;
 }
 
 const Award = (props: IAward) => {
@@ -15,8 +16,10 @@ const Award = (props: IAward) => {
     <div
       className={classnames(
         "flex flex-col items-center justify-center border rounded p-2",
+        "select-none cursor-pointer",
         {
           "border-indigo-700": props.voteId !== undefined,
+          "opacity-20": props.disabled,
         }
       )}
       onClick={() =>
@@ -28,26 +31,41 @@ const Award = (props: IAward) => {
           : unvote()
       }
     >
-      <h2 className="text-lg font-bold leading-tight">{props.name}</h2>
-      <h3 className="text-sm leading-tight">{props.description}</h3>
+      <h2 className="text-sm font-bold leading-tight">{props.name}</h2>
+      <h3 className="text-xs leading-tight">{props.description}</h3>
     </div>
   );
 };
 
 interface IAwardsList {
+  projectId: string;
   submissionId: string;
 }
 
 const AwardsList = (props: IAwardsList) => {
-  const votes = useVotes(props.submissionId);
+  const votes = useVotes(props.projectId);
   const awards = useAwards();
 
   return (
     <div className="flex space-x-2">
       {awards.map((award) => (
         <Award
+          key={award.id}
           submissionId={props.submissionId}
-          voteId={votes.find((vote) => award.id === vote.award_id)?.id}
+          disabled={
+            votes.find(
+              (vote) =>
+                award.id === vote.award_id &&
+                props.submissionId !== vote.submission_id
+            ) !== undefined
+          }
+          voteId={
+            votes.find(
+              (vote) =>
+                award.id === vote.award_id &&
+                props.submissionId === vote.submission_id
+            )?.id
+          }
           {...award}
         />
       ))}

@@ -1,10 +1,24 @@
 import { useQuery, useQueryClient, useMutation } from "react-query";
-import { fetchVotes, createVote, deleteVote } from "services/votes";
+import {
+  fetchVotes,
+  fetchVoteResults,
+  createVote,
+  deleteVote,
+} from "services/votes";
 
-export const useVotes = (submissionId: string) => {
+export const useVotes = (projectId: string) => {
   const query = useQuery<IVoteResource[], Error>(
-    ["votes", submissionId],
-    fetchVotes(submissionId) as any
+    ["votes", projectId],
+    fetchVotes(projectId) as any
+  );
+
+  return query.data || [];
+};
+
+export const useVoteResults = (projectId: string) => {
+  const query = useQuery<IResultResource[], Error>(
+    ["results", projectId],
+    fetchVoteResults(projectId) as any
   );
 
   return query.data || [];

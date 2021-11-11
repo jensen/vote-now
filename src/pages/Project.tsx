@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { VStack, Button, InputGroup, Input, Label } from "components/common";
 import { useProject } from "hooks/projects";
+import { useAuth } from "context/auth";
 import { useSubmissions, useCreateSubmission } from "hooks/submissions";
 import { useControlledInput } from "hooks/input";
 import { withPreventDefault } from "utils/events";
@@ -9,6 +10,7 @@ import { isAcceptingSubmissions, isAcceptingVotes } from "utils/status";
 import AwardsList from "components/AwardsList";
 
 interface ISubmission extends ISubmissionResource {
+  projectId: string;
   allowVote: boolean;
 }
 
@@ -35,18 +37,22 @@ const Submission = (props: ISubmission) => {
           View Website
         </a>
       </div>
-      {props.allowVote && <AwardsList submissionId={props.id} />}
+      {props.allowVote && (
+        <AwardsList projectId={props.projectId} submissionId={props.id} />
+      )}
     </div>
   );
 };
 
 interface ISubmissionList {
   projectId: string;
+  submissions: ISubmissionResource[];
   allowVote: boolean;
 }
 
 const SubmissionList = (props: ISubmissionList) => {
-  const submissions = useSubmissions(props.projectId);
+  const { submissions } = props;
+  const auth = useAuth();
 
   if (submissions.length === 0) return null;
 
@@ -56,26 +62,33 @@ const SubmissionList = (props: ISubmissionList) => {
         Submissions
       </h3>
       {submissions.map((submission) => (
-        <Submission {...submission} allowVote={props.allowVote} />
+        <Submission
+          key={submission.id}
+          {...submission}
+          projectId={props.projectId}
+          allowVote={
+            props.allowVote &&
+            auth.user !== null &&
+            auth.user.user_metadata.full_name !== submission.user
+          }
+        />
       ))}
     </VStack>
   );
 };
 
 interface ISubmissionForm {
-  projectId: string;
+  onSubmit: (submission: ICreateSubmissionResource) => void;
 }
 
 const SubmissionForm = (props: ISubmissionForm) => {
   const repository = useControlledInput("");
   const deployment = useControlledInput("");
 
-  const submit = useCreateSubmission(props.projectId);
-
   return (
     <form
       onSubmit={withPreventDefault<React.FormEvent<HTMLFormElement>>(() =>
-        submit({
+        props.onSubmit({
           repository: repository.value,
           deployment: deployment.value,
         })
@@ -96,6 +109,29 @@ const SubmissionForm = (props: ISubmissionForm) => {
   );
 };
 
+interface ISubmissions {
+  project: IProjectResource;
+}
+
+const Submissions = (props: ISubmissions) => {
+  const submissions = useSubmissions(props.project.id);
+  const submit = useCreateSubmission(props.project.id);
+  const accepting = isAcceptingSubmissions(props.project);
+
+  return (
+    <>
+      {accepting && submissions.length === 0 && (
+        <SubmissionForm onSubmit={submit} />
+      )}
+      <SubmissionList
+        projectId={props.project.id}
+        submissions={submissions}
+        allowVote={isAcceptingVotes(props.project)}
+      />
+    </>
+  );
+};
+
 interface IProject {}
 
 const Project = (props: IProject) => {
@@ -111,10 +147,8 @@ const Project = (props: IProject) => {
       </h2>
       <p className="mt-4 text-gray-500">{project.summary}</p>
 
-      {isAcceptingSubmissions(project) && <SubmissionForm projectId={id} />}
-
       <Suspense fallback={null}>
-        <SubmissionList projectId={id} allowVote={isAcceptingVotes(project)} />
+        <Submissions project={project} />
       </Suspense>
     </div>
   );

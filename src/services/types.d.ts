@@ -54,3 +54,11 @@ interface IVoteResource {
 
 interface ICreateVoteResource
   extends Omit<IVoteResource, "id" | "created_at" | "updated_at"> {}
+
+interface IResultResource {
+  vote_count: {
+    [key: string]: string;
+  };
+  name: string;
+  project_id: string;
+}

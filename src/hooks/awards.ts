@@ -6,3 +6,5 @@ export const useAwards = () => {
 
   return query.data || [];
 };
+
+export const useAwarded = (submissionId: string) => {};

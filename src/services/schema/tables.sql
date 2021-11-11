@@ -134,16 +134,22 @@ alter view public_submissions owner to authenticated;
 alter table submissions
   enable row level security;
 
-create policy "Submissions selected: voting is active"
+create policy "Submissions selected: voting is active, or owner"
   on submissions for select using (
+    auth.uid() = submissions.user_id
+    or
     get_is_vote_accepted(submissions.id)
+    or
+    get_is_finished(submissions.project_id)
   );
 
 create policy "Submissions inserted: project is active, authenticated user"
   on submissions for insert with check (
     auth.role() = 'authenticated'
     and
-    get_is_submission_accepted(project_id)
+    get_is_submission_accepted(submissions.project_id)
+    and
+    get_is_submission_first(submissions.project_id, submissions.user_id)
   );
 
 create or replace function get_is_vote_accepted(_submission_id uuid)
@@ -164,9 +170,41 @@ language sql
 security definer
 set search_path = public
 as $$
-    select (case when count(id) = 1 then true else false end)
-    from projects
-    where id = _project_id and timezone('utc'::text, now()) between projects.started_at and projects.ended_at;
+    select exists(
+      select id
+      from projects
+      where id = _project_id
+      and timezone('utc'::text, now())
+      between projects.started_at and projects.ended_at
+    );
+$$;
+
+create or replace function get_is_submission_first(_project_id uuid, _user_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+    select not exists(
+      select id
+      from submissions
+      where submissions.project_id = _project_id and submissions.user_id = _user_id
+    ) as exists;
+$$;
+
+create or replace function get_is_finished(_project_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+    select exists(
+      select id
+      from projects
+      where id = _project_id
+      and timezone('utc'::text, now())
+      after projects.completed_at
+    );
 $$;
 
 -- Awards
@@ -198,6 +236,26 @@ create table votes (
   constraint award_id foreign key(award_id) references awards(id) on delete cascade
 );
 
+create view awarded_submissions as
+  select votes.id, submission_id, award_id, project_id
+  from submissions
+  join votes on submissions.id = votes.submission_id
+  where votes.user_id = auth.uid();
+
+create view results as
+  with awards as (
+    select count(votes.id) as count, profiles.name as user_name, awards.name, submissions.user_id, votes.award_id, projects.id as project_id
+    from projects
+    join submissions on projects.id = submissions.project_id
+    join votes on submissions.id = votes.submission_id
+    join profiles on profiles.id = submissions.user_id
+    join awards on awards.id = votes.award_id
+    where timezone('utc'::text, now()) > projects.completed_at
+    group by profiles.name, awards.name, submissions.user_id, votes.award_id, projects.id
+) select json_object_agg(awards.user_name, awards.count) as vote_count, awards.name, awards.project_id
+  from awards
+  group by awards.name, awards.project_id;
+  
 alter table votes
   enable row level security;
 
@@ -210,11 +268,11 @@ create policy "Votes inserted: voting in progress, single vote, not submitter, a
   on votes for insert with check (
     auth.role() = 'authenticated'
     and
-    get_is_vote_accepted(submission_id)
+    get_is_vote_accepted(votes.submission_id)
     and
-    get_is_vote_for_other(submission_id)
+    get_is_vote_for_other(votes.submission_id)
     and
-    get_is_vote_uncast(submission_id, award_id)
+    get_is_vote_uncast(votes.submission_id, votes.award_id)
   );
 
 create policy "Votes deleted: owner"
@@ -230,9 +288,15 @@ language sql
 security definer
 set search_path = public
 as $$
-    select (case when count(votes.id) = 0 then true else false end)
-    from votes
-    where votes.submission_id = _submission_id and votes.award_id = _award_id and votes.user_id = auth.uid();
+    select not exists(
+      select votes.id
+      from projects
+      join submissions on submissions.project_id = projects.id
+      join votes on votes.submission_id = submissions.id
+      where projects.id = (select submissions.project_id from submissions where submissions.id = _submission_id)
+      and votes.user_id = auth.uid()
+      and votes.award_id = _award_id
+    );
 $$;
 
 create or replace function get_is_vote_for_other(_submission_id uuid)
@@ -241,7 +305,10 @@ language sql
 security definer
 set search_path = public
 as $$
-    select (case when count(submissions.id) = 1 then true else false end)
-    from submissions
-    where submissions.id = _submission_id and submissions.user_id != auth.uid();
+    select exists (
+      select submissions.id
+      from submissions
+      where submissions.id = _submission_id
+      and submissions.user_id != auth.uid()
+    );
 $$;

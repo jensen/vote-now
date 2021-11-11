@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 
 const Projects = React.lazy(() => import("pages/Projects"));

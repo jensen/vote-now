@@ -60,15 +60,9 @@ const Router = () => (
       <QueryClientProvider client={queryClient}>
         <Routes>
           <Route path="/*" element={<Layout />}>
+            <Route path="" element={<Navigate to="/projects" />} />
             <Route path="login" element={<Login />} />
-            <Route
-              path="projects/*"
-              element={
-                <VerifyAuthenticated>
-                  <ProjectsPage />
-                </VerifyAuthenticated>
-              }
-            />
+            <Route path="projects/*" element={<ProjectsPage />} />
             <Route
               path="admin/*"
               element={
