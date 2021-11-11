@@ -14,7 +14,6 @@ interface IProjectResource {
   summary: string;
   complexity: string;
   description: string;
-  submissions: string[];
 }
 
 interface ICreateProjectResource
