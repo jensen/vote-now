@@ -49,9 +49,9 @@ language sql
 security definer
 set search_path = public
 as $$
-    select admin
-    from profiles
-    where id = auth.uid()
+    select profiles_private.admin
+    from profiles_private
+    where profiles_private.id = auth.uid()
 $$;
 
 -- Projects
@@ -202,8 +202,7 @@ as $$
       select id
       from projects
       where id = _project_id
-      and timezone('utc'::text, now())
-      after projects.completed_at
+      and timezone('utc'::text, now()) > projects.completed_at
     );
 $$;
 
