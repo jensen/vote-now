@@ -98,14 +98,15 @@ const Header = () => {
                           {userNavigation.map((link) => (
                             <Menu.Item key={link.label}>
                               {({ active }) => (
-                                <button
+                                <Link
                                   className={classnames(
                                     active ? "bg-gray-100" : "",
                                     "flex w-full px-4 py-2 text-sm text-gray-700"
                                   )}
+                                  to="/logout"
                                 >
                                   {link.label}
-                                </button>
+                                </Link>
                               )}
                             </Menu.Item>
                           ))}
