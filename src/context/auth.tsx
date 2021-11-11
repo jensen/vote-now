@@ -57,7 +57,6 @@ const useWaitForSession = () => {
 };
 
 const AuthProvider = (props: PropsWithChildren<unknown>) => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const [authenticating, setAuthenticating] = useState<boolean>(

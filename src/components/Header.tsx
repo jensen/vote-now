@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import classnames from "classnames";
 import { useMatch, Link } from "react-router-dom";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useAuth } from "context/auth";
 import { DiscordLoginButton } from "./LoginButton";
 import Logo from "components/Logo";
