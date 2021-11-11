@@ -178,7 +178,7 @@ The only provider enabled for this project is [discord](https://discord.com). Th
 supabase.auth.signIn({ provider: "discord" });
 ```
 
-This is not called directly. It is wrapped in a `login` function. sUsers can login by clicking on the [src/components/LoginButton.tsx](src/components/LoginButton.tsx). When they complete the OAuth redirect the session will be available using the `AuthContext`.
+This is not called directly. It is wrapped in a `login` function. Users can login by clicking on the [src/components/LoginButton.tsx](src/components/LoginButton.tsx). When they complete the OAuth redirect the session will be available using the `AuthContext`.
 
 ```tsx
 <AuthContext.Provider
@@ -217,6 +217,6 @@ export const VerifyAuthenticated = ({
 
 ### Incomplete
 
-- Not all the RLS is complete, there also needs to be tests the security configuration
+- Not all the RLS is complete, there also needs to be tests for the security configuration
 - Styling and tailwind stuff is messy
 - Need to write some tests and refactor the component tree
