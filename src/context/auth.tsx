@@ -4,7 +4,7 @@ import React, {
   PropsWithChildren,
   useEffect,
 } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import supabase, { ISupabaseSession, ISupabaseUser } from "services";
 
