@@ -76,7 +76,7 @@ const AuthProvider = (props: PropsWithChildren<unknown>) => {
     );
   };
 
-  const logout = () => supabase.auth.signOut().then(() => navigate("/login"));
+  const logout = () => supabase.auth.signOut();
 
   useEffect(() => {
     const session = supabase.auth.session();

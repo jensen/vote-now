@@ -158,10 +158,12 @@ language sql
 security definer
 set search_path = public
 as $$
-    select (case when count(projects.id) = 1 then true else false end)
-    from projects
-    join submissions on submissions.project_id = projects.id
-    where submissions.id = _submission_id and timezone('utc'::text, now()) between projects.ended_at and projects.completed_at;
+    select exists(
+      select projects.id
+      from projects
+      join submissions on submissions.project_id = projects.id
+      where submissions.id = _submission_id and timezone('utc'::text, now()) between projects.ended_at and projects.completed_at
+    );
 $$;
 
 create or replace function get_is_submission_accepted(_project_id uuid)

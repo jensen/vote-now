@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import AuthProvider, { useAuth } from "context/auth";
 
 import Layout from "components/layouts/Layout";
-import Login from "pages/Login";
+import Logout from "pages/Logout";
 
 import { ProjectsPage, AdminPage } from "pages";
 
@@ -61,7 +61,7 @@ const Router = () => (
         <Routes>
           <Route path="/*" element={<Layout />}>
             <Route path="" element={<Navigate to="/projects" />} />
-            <Route path="login" element={<Login />} />
+            <Route path="logout" element={<Logout />} />
             <Route path="projects/*" element={<ProjectsPage />} />
             <Route
               path="admin/*"

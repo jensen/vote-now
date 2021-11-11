@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
+import Loading from "components/common/Loading";
 
 const Projects = React.lazy(() => import("pages/Projects"));
 const Project = React.lazy(() => import("pages/Project"));
@@ -17,11 +18,15 @@ const ErrorFallback = ({ error, resetErrorBoundary }: IErrorFallback) => {
   return <button onClick={resetErrorBoundary}>Try again</button>;
 };
 
-const LoadingFallback = () => <div>Loading</div>;
+const LoadingFallback = () => <Loading />;
 
 const Page = (props: React.PropsWithChildren<unknown>) => (
   <ErrorBoundary FallbackComponent={ErrorFallback}>
-    <Suspense fallback={<LoadingFallback />}>{props.children}</Suspense>
+    <Suspense fallback={<LoadingFallback />}>
+      <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">{props.children}</div>
+      </div>
+    </Suspense>
   </ErrorBoundary>
 );
 

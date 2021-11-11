@@ -114,15 +114,19 @@ interface ISubmissions {
 }
 
 const Submissions = (props: ISubmissions) => {
+  const auth = useAuth();
   const submissions = useSubmissions(props.project.id);
   const submit = useCreateSubmission(props.project.id);
   const accepting = isAcceptingSubmissions(props.project);
+  const voting = isAcceptingVotes(props.project);
 
   return (
     <>
-      {accepting && submissions.length === 0 && (
+      {accepting && auth.user && submissions.length === 0 && (
         <SubmissionForm onSubmit={submit} />
       )}
+      {accepting && auth.user === null && <div>Login to Submit</div>}
+      {voting && auth.user === null && <div>Login to Vote</div>}
       <SubmissionList
         projectId={props.project.id}
         submissions={submissions}
