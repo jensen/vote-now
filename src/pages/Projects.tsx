@@ -92,12 +92,6 @@ const ProjectPreview = (props: IProjectPreview) => {
             <Tag label={props.complexity} />
           </dd>
         </div>
-        <div>
-          <dt className="font-medium text-gray-900">Submissions</dt>
-          <dd className="mt-2 text-sm text-gray-500">
-            {props.submissions.length}
-          </dd>
-        </div>
       </dl>
     </div>
   );
